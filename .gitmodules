@@ -1,0 +1,3 @@
+[submodule "AndroidCodeQualityConfig"]
+	path = AndroidCodeQualityConfig
+	url = git@github.com:Luolc/AndroidCodeQualityConfig.git

@@ -22,20 +22,21 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter;
+package com.luolc.louter.sample;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/6
+ * @since 2017/1/9
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-public @interface Route {
+public class BobActivity extends AppCompatActivity {
 
-  String value();
+  @Override
+  protected void onCreate(@Nullable final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.bob_act);
+  }
 }

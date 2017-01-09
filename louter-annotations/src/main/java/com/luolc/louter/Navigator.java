@@ -31,11 +31,11 @@ import java.lang.annotation.Target;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/6
+ * @since 2017/1/7
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.CLASS)
-public @interface Route {
+public @interface Navigator {
 
   String value();
 }

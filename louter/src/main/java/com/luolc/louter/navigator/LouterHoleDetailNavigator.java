@@ -22,20 +22,33 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter;
+package com.luolc.louter.navigator;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import android.content.Intent;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/6
+ * @since 2017/1/7
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-public @interface Route {
+public final class LouterHoleDetailNavigator extends AbstractNavigator<LouterHoleDetailNavigator> {
 
-  String value();
+  LouterHoleDetailNavigator(final String baseUrl, final Object starter) {
+    super(baseUrl, "hole/detail", starter);
+  }
+
+  public LouterHoleDetailNavigator holeId(final int holeId) {
+    getIntent().putExtra("holeId", holeId);
+    return this;
+  }
+
+  public LouterHoleDetailNavigator hasStarred(final boolean hasStarred) {
+    getIntent().putExtra("hasStarred", hasStarred);
+    return this;
+  }
+
+  @Override
+  protected boolean isAllRequiredParamsExist() {
+    final Intent intent = getIntent();
+    return intent.hasExtra("holeId");
+  }
 }

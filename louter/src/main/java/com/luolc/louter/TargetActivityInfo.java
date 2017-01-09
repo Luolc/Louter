@@ -24,18 +24,28 @@
 
 package com.luolc.louter;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import android.support.annotation.NonNull;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/6
+ * @since 2017/1/9
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-public @interface Route {
+public final class TargetActivityInfo {
 
-  String value();
+  private final String mPackageName;
+
+  private final String mClassName;
+
+  public TargetActivityInfo(@NonNull final String packageName, @NonNull final String className) {
+    mPackageName = packageName;
+    mClassName = className;
+  }
+
+  public String packageName() {
+    return mPackageName;
+  }
+
+  public String className() {
+    return mClassName;
+  }
 }

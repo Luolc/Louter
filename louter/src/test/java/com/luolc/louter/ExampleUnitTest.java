@@ -1,4 +1,4 @@
-package com.luolc.louter.sample;
+package com.luolc.louter;
 
 import org.junit.Test;
 

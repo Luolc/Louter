@@ -22,20 +22,28 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter;
+package com.luolc.louter.navigator;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import android.support.annotation.NonNull;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/6
+ * @since 2017/1/7
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-public @interface Route {
+public final class CentralNavigator {
 
-  String value();
+  @NonNull
+  private final Object mStarter;
+
+  @NonNull
+  private final String mBaseUrl;
+
+  public CentralNavigator(@NonNull final Object starter, @NonNull final String baseUrl) {
+    mStarter = starter;
+    mBaseUrl = baseUrl;
+  }
+
+  public LouterHoleDetailNavigator toHoleDetail() {
+    return new LouterHoleDetailNavigator(mBaseUrl, mStarter);
+  }
 }

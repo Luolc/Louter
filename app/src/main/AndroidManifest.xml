@@ -8,11 +8,26 @@
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+                android:name=".AliceActivity"
+                android:label="Alice">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+                android:name=".BobActivity"
+                android:label="Bob">
+            <intent-filter android:priority="1">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data
+                        android:scheme="http"
+                        android:host="louter.luolc.com"
+                        android:path="/hole/detail"/>
             </intent-filter>
         </activity>
     </application>

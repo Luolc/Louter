@@ -22,20 +22,39 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter;
+package com.luolc.louter.sample;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+
+import com.luolc.louter.Louter;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/6
+ * @since 2017/1/9
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-public @interface Route {
+public class AliceActivity extends AppCompatActivity {
 
-  String value();
+  private Louter mLouter;
+  @OnClick(R.id.btn_to_bob)
+  void onClickToBob() {
+    mLouter.with(this)
+        .toHoleDetail()
+        .holeId(7)
+        .start();
+  }
+
+  @Override
+  protected void onCreate(@Nullable final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.alice_act);
+    ButterKnife.bind(this);
+    mLouter = new Louter.Builder()
+        .baseUrl("http://louter.luolc.com/")
+        .build();
+  }
 }

@@ -24,18 +24,54 @@
 
 package com.luolc.louter;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+
+import com.luolc.louter.navigator.CentralNavigator;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/6
+ * @since 2017/1/7
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
-public @interface Route {
+public final class Louter {
 
-  String value();
+  @NonNull
+  private final String mBaseUrl;
+
+  @SuppressWarnings("WeakerAccess")
+  Louter(@NonNull final String baseUrl) {
+    mBaseUrl = baseUrl;
+  }
+
+  public CentralNavigator with(@NonNull final Context context) {
+    return new CentralNavigator(context, mBaseUrl);
+  }
+
+  public CentralNavigator with(@NonNull final Activity activity) {
+    return new CentralNavigator(activity, mBaseUrl);
+  }
+
+  public CentralNavigator with(@NonNull final Fragment fragment) {
+    return new CentralNavigator(fragment, mBaseUrl);
+  }
+
+  public CentralNavigator with(@NonNull final android.app.Fragment fragment) {
+    return new CentralNavigator(fragment, mBaseUrl);
+  }
+
+  public static final class Builder {
+
+    private String mBaseUrl;
+
+    public Builder baseUrl(@NonNull final String baseUrl) {
+      mBaseUrl = baseUrl;
+      return this;
+    }
+
+    public Louter build() {
+      return new Louter(mBaseUrl);
+    }
+  }
 }

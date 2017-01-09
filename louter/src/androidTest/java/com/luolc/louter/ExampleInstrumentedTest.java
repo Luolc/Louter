@@ -1,4 +1,4 @@
-package com.luolc.louter.sample;
+package com.luolc.louter;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -17,10 +17,10 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
   @Test
-  public void useAppContext() throws Exception {
+  public void useAppContext() throws RuntimeException {
     // Context of the app under test.
-    Context appContext = InstrumentationRegistry.getTargetContext();
+    final Context appContext = InstrumentationRegistry.getTargetContext();
 
-    assertEquals("com.luolc.louter.sample", appContext.getPackageName());
+    assertEquals("com.luolc.louter.test", appContext.getPackageName());
   }
 }
