@@ -1,1 +1,1 @@
-include ':app', ':louter-annotations', ':louter'
+include ':app', ':louter-annotations', ':louter', ':louter-compiler'
