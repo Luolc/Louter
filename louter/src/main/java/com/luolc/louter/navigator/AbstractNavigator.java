@@ -43,7 +43,7 @@ import java.util.Map;
  * @author LuoLiangchen
  * @since 2017/1/7
  */
-abstract class AbstractNavigator<N extends AbstractNavigator> {
+public abstract class AbstractNavigator<N extends AbstractNavigator> {
 
   private static final int REQUEST_CODE_NONE = Integer.MAX_VALUE;
 
@@ -73,7 +73,7 @@ abstract class AbstractNavigator<N extends AbstractNavigator> {
   @AnimRes
   private int mExitAnim;
 
-  AbstractNavigator(final String baseUrl, final String path, final Object starter) {
+  protected AbstractNavigator(final String baseUrl, final String path, final Object starter) {
     mBaseUrl = baseUrl;
     mPath = path;
     mStarter = starter;
@@ -205,9 +205,9 @@ abstract class AbstractNavigator<N extends AbstractNavigator> {
     return (N) this;
   }
 
-  abstract boolean isAllRequiredParamsExist();
+  protected abstract boolean isAllRequiredParamsExist();
 
-  Intent getIntent() {
+  protected Intent getIntent() {
     return mIntent;
   }
 }

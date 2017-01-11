@@ -22,33 +22,15 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter.navigator;
-
-import android.content.Intent;
+package com.luolc.louter.compiler;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/7
+ * @since 2017/1/11
  */
-public final class LouterHoleDetailNavigator extends AbstractNavigator<LouterHoleDetailNavigator> {
+public class Param {
 
-  LouterHoleDetailNavigator(final String baseUrl, final Object starter) {
-    super(baseUrl, "hole/detail", starter);
-  }
+  private String mKey;
 
-  public LouterHoleDetailNavigator holeId(final int holeId) {
-    getIntent().putExtra("holeId", holeId);
-    return this;
-  }
-
-  public LouterHoleDetailNavigator hasStarred(final boolean hasStarred) {
-    getIntent().putExtra("hasStarred", hasStarred);
-    return this;
-  }
-
-  @Override
-  protected boolean isAllRequiredParamsExist() {
-    final Intent intent = getIntent();
-    return intent.hasExtra("holeId");
-  }
+  private boolean mRequired;
 }

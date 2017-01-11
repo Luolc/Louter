@@ -22,30 +22,13 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter.navigator;
-
-import android.support.annotation.NonNull;
-
-import com.luolc.louter.navigator.hole.LouterHoleDetailNavigator;
+package com.luolc.louter.compiler;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/7
+ * @since 2017/1/11
  */
-public final class CentralNavigator {
+public class SubNavigatorGenerator {
 
-  @NonNull
-  private final Object mStarter;
 
-  @NonNull
-  private final String mBaseUrl;
-
-  public CentralNavigator(@NonNull final Object starter, @NonNull final String baseUrl) {
-    mStarter = starter;
-    mBaseUrl = baseUrl;
-  }
-
-  public LouterHoleDetailNavigator toHoleDetail() {
-    return new LouterHoleDetailNavigator(mBaseUrl, mStarter);
-  }
 }
