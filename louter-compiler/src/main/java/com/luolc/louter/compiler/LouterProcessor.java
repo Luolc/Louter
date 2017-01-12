@@ -26,9 +26,13 @@ package com.luolc.louter.compiler;
 
 import com.luolc.louter.Navigator;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -46,6 +50,7 @@ import javax.tools.Diagnostic;
  * @author LuoLiangchen
  * @since 2017/1/10
  */
+@SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
 public final class LouterProcessor extends AbstractProcessor {
 
   private Elements mElementUtils;
@@ -55,75 +60,74 @@ public final class LouterProcessor extends AbstractProcessor {
   private Filer mFiler;
 
   @Override
-  public synchronized void init(ProcessingEnvironment env) {
+  public synchronized void init(final ProcessingEnvironment env) {
     super.init(env);
     mElementUtils = env.getElementUtils();
     mTypeUtils = env.getTypeUtils();
     mFiler = env.getFiler();
   }
 
+
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    Set<String> types = new LinkedHashSet<>();
-    for (Class<? extends Annotation> annotation : getSupportedAnnotations()) {
-      types.add(annotation.getCanonicalName());
-    }
-    return types;
+    return getSupportedAnnotations().stream()
+        .map(Class::getCanonicalName)
+        .collect(Collectors.toSet());
   }
 
   private Set<Class<? extends Annotation>> getSupportedAnnotations() {
-    Set<Class<? extends Annotation>> annotations = new LinkedHashSet<>();
-
-    annotations.add(Navigator.class);
-
-    return annotations;
+    return Stream
+        .<Class<? extends Annotation>>of(
+            Navigator.class)
+        .collect(Collectors.toSet());
   }
 
   @Override
-  public boolean process(Set<? extends TypeElement> set, RoundEnvironment env) {
-
+  public boolean process(final Set<? extends TypeElement> set, final RoundEnvironment env) {
+    final Map<Element, SubNavigatorGenerator> generators = findAndParseTargets(env);
+    generators.forEach((element, generator) -> {
+      try {
+        generator.brewJava().writeTo(mFiler);
+      } catch (IOException e) {
+        error(element, "Unable to write navigator for type %s: %s", element, e.getMessage());
+      }
+    });
     return false;
   }
 
-  private void findAndParseTargets(RoundEnvironment env) {
-    for (Element element : env.getElementsAnnotatedWith(Navigator.class)) {
-
-    }
+  private Map<Element, SubNavigatorGenerator> findAndParseTargets(final RoundEnvironment env) {
+    return env.getElementsAnnotatedWith(Navigator.class).stream()
+        .collect(Collectors.toMap(e -> e, this::parseNavigator));
   }
 
-  private void parseNavigator(Element element) {
-    TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
+  private SubNavigatorGenerator parseNavigator(final Element element) {
+    final TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
     if (element.getKind() != ElementKind.INTERFACE) {
       error(element, "@%s class type must be 'interface'. (%s.%s)",
           Navigator.class.getSimpleName(), enclosingElement.getQualifiedName(),
           element.getSimpleName());
-      return;
+      return null;
     }
-    element.getEnclosedElements().stream()
+    final List<NavigationParam> params = element.getEnclosedElements().stream()
         .filter(e -> e.getKind() == ElementKind.METHOD)
         .map(e -> (ExecutableElement) e)
-        .map(e -> {
-
-        })
-
-
-    for (Element e : element.getEnclosedElements()) {
-      if (e.getKind() == ElementKind.METHOD) {
-        ExecutableElement executableElement = (ExecutableElement) e;
-        executableElement.getSimpleName()
-      }
-    }
+        .map(NavigationParam::new)
+        .collect(Collectors.toList());
+    final Navigator annotation = element.getAnnotation(Navigator.class);
+    return new SubNavigatorGenerator(annotation, params, getPackageName(enclosingElement));
   }
 
-  private void error(Element element, String message, Object... args) {
+  private String getPackageName(final TypeElement type) {
+    return mElementUtils.getPackageOf(type).getQualifiedName().toString();
+  }
+
+  private void error(final Element element, final String message, final Object... args) {
     printMessage(Diagnostic.Kind.ERROR, element, message, args);
   }
 
-  private void printMessage(Diagnostic.Kind kind, Element element, String message, Object[] args) {
-    if (args.length > 0) {
-      message = String.format(message, args);
-    }
-
-    processingEnv.getMessager().printMessage(kind, message, element);
+  private void printMessage(final Diagnostic.Kind kind, final Element element,
+                            final String message, final Object... args) {
+    final String rawMessage = args.length > 0 ? String.format(message, args) : message;
+    processingEnv.getMessager().printMessage(kind, rawMessage, element);
   }
 }
