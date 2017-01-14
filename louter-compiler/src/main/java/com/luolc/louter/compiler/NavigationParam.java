@@ -28,9 +28,7 @@ import com.squareup.javapoet.TypeName;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Name;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 
 /**
@@ -41,15 +39,14 @@ final class NavigationParam {
 
   private final String mKey;
 
-  private final boolean mRequired;
-
   private final TypeName mParamType;
 
-  NavigationParam(final ExecutableElement executableElement) {
-    final VariableElement paramElement = executableElement.getParameters().get(0);
-    mKey = executableElement.getSimpleName().toString();
-    mParamType = TypeName.get(paramElement.asType());
-    mRequired = isRequiredParam(paramElement);
+  private final boolean mRequired;
+
+  NavigationParam(final String key, final TypeName paramType, final boolean required) {
+    mKey = key;
+    mParamType = paramType;
+    mRequired = required;
   }
 
   public String getKey() {
@@ -64,7 +61,7 @@ final class NavigationParam {
     return mParamType;
   }
 
-  private static boolean isRequiredParam(final Element element) {
+  static boolean isRequiredParam(final Element element) {
     return !hasAnnotationWithName(element, "Nullable");
   }
 

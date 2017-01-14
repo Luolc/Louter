@@ -27,6 +27,8 @@ package com.luolc.louter.compiler;
 import com.luolc.louter.Navigator;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
@@ -36,6 +38,8 @@ import java.util.List;
 
 import javax.lang.model.element.Modifier;
 
+import static com.squareup.javapoet.MethodSpec.methodBuilder;
+
 /**
  * @author LuoLiangchen
  * @since 2017/1/11
@@ -43,6 +47,7 @@ import javax.lang.model.element.Modifier;
 public class SubNavigatorGenerator {
 
   private static final String ABSTRACT_NAVIGATOR_PACKAGE_NAME = "com.luolc.louter.navigator";
+
   private static final String ABSTRACT_NAVIGATOR_CLASS_NAME = "AbstractNavigator";
 
   private final String mPath;
@@ -51,37 +56,126 @@ public class SubNavigatorGenerator {
 
   private final String mPackageName;
 
+  private final String mSimpleClassName;
+
+  private final ClassName mThisClass;
+
   public SubNavigatorGenerator(final Navigator annotation, final List<NavigationParam> params,
                                final String packageName) {
     mPath = annotation.value();
     mParams = params;
     mPackageName = packageName;
+    mSimpleClassName = generateSimpleClassName();
+    mThisClass = ClassName.get(mPackageName, generateSimpleClassName());
   }
 
   public JavaFile brewJava() {
     final ClassName abstractNavigator = ClassName.get(
         ABSTRACT_NAVIGATOR_PACKAGE_NAME, ABSTRACT_NAVIGATOR_CLASS_NAME);
-    final TypeName thisClass = ClassName.get(mPackageName, generateSimpleClassName());
-    final TypeName superClass = ParameterizedTypeName.get(abstractNavigator, thisClass);
-    final TypeSpec.Builder navigatorTypeSpec = TypeSpec.classBuilder(generateSimpleClassName())
+    final TypeName superClass = ParameterizedTypeName.get(abstractNavigator, mThisClass);
+    TypeSpec root = TypeSpec.classBuilder(mSimpleClassName)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-        .superclass(superClass);
-    emitParamSetter(navigatorTypeSpec);
-    return JavaFile.builder(mPackageName, navigatorTypeSpec.build()).build();
+        .superclass(superClass)
+        .addMethod(createConstructor())
+        .addMethod(createStartMethod())
+        .addMethod(createAddFlagsMethod())
+        .addMethod(createForResultMethod())
+        .addMethod(createWithAnimMethod())
+        .addMethod(createRequiredParamsCheckMethod())
+        .addMethods(createParamSetters())
+        .build();
+    return JavaFile.builder(mPackageName, root).build();
   }
 
   String generateSimpleClassName() {
     return Arrays.stream(mPath.split("/|_"))
         .filter(word -> !word.isEmpty())
-        .map(this::capitalizeFully)
+        .map(SubNavigatorGenerator::capitalizeFully)
         .reduce("LouterNavigator_", (x, y) -> x + y);
   }
 
-  String capitalizeFully(final String word) {
+  static String capitalizeFully(final String word) {
     return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
   }
 
-  private void emitParamSetter(final TypeSpec.Builder builder) {
-    // TODO: 2017/1/12 emit method
+  private MethodSpec createConstructor() {
+    return MethodSpec.constructorBuilder()
+        .addModifiers(Modifier.PUBLIC)
+        .addParameter(ClassName.get(String.class), "baseUrl")
+        .addParameter(ClassName.OBJECT, "starter")
+        .addStatement("super(baseUrl, $S, starter)", mPath)
+        .build();
+  }
+
+  private static MethodSpec createStartMethod() {
+    return methodBuilder("start")
+        .addModifiers(Modifier.PUBLIC)
+        .returns(TypeName.VOID)
+        .addAnnotation(Override.class)
+        .addStatement("super.start()")
+        .build();
+  }
+
+  private MethodSpec createAddFlagsMethod() {
+    return methodBuilder("addFlags")
+        .addModifiers(Modifier.PUBLIC)
+        .returns(mThisClass)
+        .addAnnotation(Override.class)
+        .addParameter(TypeName.INT, "flags")
+        .addStatement("return super.addFlags(flags)")
+        .build();
+  }
+
+  private MethodSpec createForResultMethod() {
+    return methodBuilder("forResult")
+        .addModifiers(Modifier.PUBLIC)
+        .returns(mThisClass)
+        .addAnnotation(Override.class)
+        .addParameter(TypeName.INT, "requestCode")
+        .addStatement("return super.forResult(requestCode)")
+        .build();
+  }
+
+  private MethodSpec createWithAnimMethod() {
+    final ClassName animRes = ClassName.get("android.support.annotation", "AnimRes");
+    return methodBuilder("withAnim")
+        .addModifiers(Modifier.PUBLIC)
+        .returns(mThisClass)
+        .addAnnotation(Override.class)
+        .addParameter(ParameterSpec.builder(TypeName.INT, "enterAnim").addAnnotation(animRes).build())
+        .addParameter(ParameterSpec.builder(TypeName.INT, "exitAnim").addAnnotation(animRes).build())
+        .addStatement("return super.withAnim(enterAnim, exitAnim)")
+        .build();
+  }
+
+  private MethodSpec createRequiredParamsCheckMethod() {
+    final ClassName intent = ClassName.get("android.content", "Intent");
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder("isAllRequiredParamsExist")
+        .addModifiers(Modifier.PROTECTED)
+        .returns(TypeName.BOOLEAN)
+        .addAnnotation(Override.class)
+        .addStatement("final $T intent = getIntent()", intent)
+        .addStatement("boolean result = true");
+    mParams.stream()
+        .filter(NavigationParam::isRequired)
+        .forEach(param -> builder.addStatement("result &= intent.hasExtra($S)", param.getKey()));
+    builder.addStatement("return result");
+    return builder.build();
+  }
+
+  private Iterable<MethodSpec> createParamSetters() {
+    return mParams.stream()
+        .map(this::createParamSetter)
+        ::iterator;
+  }
+
+  private MethodSpec createParamSetter(final NavigationParam param) {
+    return methodBuilder(param.getKey())
+        .addModifiers(Modifier.PUBLIC)
+        .returns(mThisClass)
+        .addParameter(param.getParamType(), param.getKey())
+        .addStatement("getIntent().putExtra($S, $L)", param.getKey(), param.getKey())
+        .addStatement("return this")
+        .build();
   }
 }

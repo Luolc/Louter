@@ -25,11 +25,15 @@
 package com.luolc.louter.compiler;
 
 import com.luolc.louter.Navigator;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
+import java.util.LinkedList;
+import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -54,7 +58,16 @@ public class SubNavigatorGeneratorTest {
         return Navigator.class;
       }
     };
-    mSubNavigatorGenerator = new SubNavigatorGenerator(annotation, null, "com.example");
+    final List<NavigationParam> params = new LinkedList<>();
+    params.add(new NavigationParam("holeId", TypeName.INT, true));
+    params.add(new NavigationParam("from", ClassName.get(String.class), true));
+    params.add(new NavigationParam("hasStarted", TypeName.BOOLEAN, false));
+    mSubNavigatorGenerator = new SubNavigatorGenerator(annotation, params, "com.example");
+  }
+
+  @Test
+  public void brewJava() {
+    assertEquals("", mSubNavigatorGenerator.brewJava().toString());
   }
 
   @Test
@@ -65,16 +78,16 @@ public class SubNavigatorGeneratorTest {
 
   @Test
   public void capitalizeFullyWithCommonWord() {
-    assertEquals("Hello", mSubNavigatorGenerator.capitalizeFully("hElLO"));
+    assertEquals("Hello", SubNavigatorGenerator.capitalizeFully("hElLO"));
   }
 
   @Test
   public void capitalizeFullyWithSingleLetter() {
-    assertEquals("A", mSubNavigatorGenerator.capitalizeFully("a"));
+    assertEquals("A", SubNavigatorGenerator.capitalizeFully("a"));
   }
 
   @Test
   public void capitalizeFullyWithNonLetter() {
-    assertEquals("1", mSubNavigatorGenerator.capitalizeFully("1"));
+    assertEquals("1", SubNavigatorGenerator.capitalizeFully("1"));
   }
 }

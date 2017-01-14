@@ -25,6 +25,7 @@
 package com.luolc.louter.compiler;
 
 import com.luolc.louter.Navigator;
+import com.squareup.javapoet.TypeName;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -42,6 +43,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -111,10 +113,18 @@ public final class LouterProcessor extends AbstractProcessor {
     final List<NavigationParam> params = element.getEnclosedElements().stream()
         .filter(e -> e.getKind() == ElementKind.METHOD)
         .map(e -> (ExecutableElement) e)
-        .map(NavigationParam::new)
+        .map(this::convertToNavigationParam)
         .collect(Collectors.toList());
     final Navigator annotation = element.getAnnotation(Navigator.class);
     return new SubNavigatorGenerator(annotation, params, getPackageName(enclosingElement));
+  }
+
+  private NavigationParam convertToNavigationParam(final ExecutableElement paramDefinition) {
+    final VariableElement param = paramDefinition.getParameters().get(0);
+    final String key = paramDefinition.getSimpleName().toString();
+    final TypeName paramType = TypeName.get(param.asType());
+    final boolean required = NavigationParam.isRequiredParam(param);
+    return new NavigationParam(key, paramType, required);
   }
 
   private String getPackageName(final TypeElement type) {
