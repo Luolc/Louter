@@ -1,3 +1,5 @@
+import org.gradle.internal.jvm.Jvm
+
 apply plugin: 'com.android.library'
 apply from: '../AndroidCodeQualityConfig/quality.gradle'
 
@@ -23,10 +25,31 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    testCompile 'junit:junit:4.12'
+    compile deps.supportAnnotations
+    compile deps.supportCompat
+
+    testCompile deps.junit
+    testCompile deps.mockito
+    testCompile deps.truth
+    testCompile deps.compiletesting
+    testCompile files(getRuntimeJar())
+    testCompile files(Jvm.current().getToolsJar())
+    testCompile project(':louter-compiler')
+}
+
+def getRuntimeJar() {
+    try {
+        final File javaBase = new File(System.getProperty("java.home")).getCanonicalFile();
+        File runtimeJar = new File(javaBase, "lib/rt.jar");
+        if (runtimeJar.exists()) {
+            return runtimeJar;
+        }
+        runtimeJar = new File(javaBase, "jre/lib/rt.jar");
+        return runtimeJar.exists() ? runtimeJar : null;
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
 }

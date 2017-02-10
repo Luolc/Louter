@@ -25,15 +25,12 @@
 package com.luolc.louter.compiler;
 
 import com.luolc.louter.Navigator;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.LinkedList;
-import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -58,16 +55,7 @@ public class SubNavigatorGeneratorTest {
         return Navigator.class;
       }
     };
-    final List<NavigationParam> params = new LinkedList<>();
-    params.add(new NavigationParam("holeId", TypeName.INT, true));
-    params.add(new NavigationParam("from", ClassName.get(String.class), true));
-    params.add(new NavigationParam("hasStarted", TypeName.BOOLEAN, false));
-    mSubNavigatorGenerator = new SubNavigatorGenerator(annotation, params, "com.example");
-  }
-
-  @Test
-  public void brewJava() {
-    assertEquals("", mSubNavigatorGenerator.brewJava().toString());
+    mSubNavigatorGenerator = new SubNavigatorGenerator(annotation, new LinkedList<>(), "test");
   }
 
   @Test

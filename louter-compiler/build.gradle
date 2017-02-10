@@ -4,6 +4,7 @@ apply from: '../AndroidCodeQualityConfig/quality.gradle'
 dependencies {
     compile project(':louter-annotations')
     compile deps.javapoet
+    compile deps.autoservice
 
     testCompile deps.junit
     testCompile deps.mockito

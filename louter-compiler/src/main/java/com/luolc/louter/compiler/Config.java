@@ -22,20 +22,40 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter;
+package com.luolc.louter.compiler;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.TypeName;
 
 /**
  * @author LuoLiangchen
- * @since 2017/1/7
+ * @since 2017/2/10
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.CLASS)
-public @interface Navigator {
+public interface Config {
 
-  String value();
+  String ROOT_PACKAGE = "com.luolc.louter";
+
+  String LOUTER_PACKAGE_NAME = ROOT_PACKAGE;
+
+  String LOUTER_CLASS_NAME = "Louter";
+
+  String CENTRAL_NAVIGATOR_PACKAGE_NAME = ROOT_PACKAGE;
+
+  String CENTRAL_NAVIGATOR_CLASS_NAME = "CentralNavigator";
+
+  ClassName NON_NULL = ClassName.get("android.support.annotation", "NonNull");
+
+  TypeName CONTEXT = ClassName.get("android.content", "Context");
+
+  TypeName ACTIVITY = ClassName.get("android.app", "Activity");
+
+  TypeName FRAGMENT = ClassName.get("android.app", "Fragment");
+
+  TypeName SUPPORT_FRAGMENT = ClassName.get("android.support.v4.app", "Fragment");
+
+  ClassName LOUTER = ClassName.get(LOUTER_PACKAGE_NAME, LOUTER_CLASS_NAME);
+
+  TypeName LOUTER_BUILDER = LOUTER.nestedClass("Builder");
+
+  TypeName CENTRAL_NAVIGATOR = ClassName.get(CENTRAL_NAVIGATOR_PACKAGE_NAME, "CentralNavigator");
 }

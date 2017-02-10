@@ -24,11 +24,14 @@
 
 package com.luolc.louter.compiler;
 
+import com.google.auto.service.AutoService;
+
 import com.luolc.louter.Navigator;
 import com.squareup.javapoet.TypeName;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +41,9 @@ import java.util.stream.Stream;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -53,6 +58,7 @@ import javax.tools.Diagnostic;
  * @since 2017/1/10
  */
 @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
+@AutoService(Processor.class)
 public final class LouterProcessor extends AbstractProcessor {
 
   private Elements mElementUtils;
@@ -69,6 +75,10 @@ public final class LouterProcessor extends AbstractProcessor {
     mFiler = env.getFiler();
   }
 
+  @Override
+  public SourceVersion getSupportedSourceVersion() {
+    return SourceVersion.RELEASE_8;
+  }
 
   @Override
   public Set<String> getSupportedAnnotationTypes() {
@@ -94,7 +104,21 @@ public final class LouterProcessor extends AbstractProcessor {
         error(element, "Unable to write navigator for type %s: %s", element, e.getMessage());
       }
     });
-    return false;
+    if (!generators.isEmpty()) {
+      try {
+        new CentralNavigatorGenerator(new ArrayList<>(generators.values())).brewJava().writeTo(mFiler);
+      } catch (IOException e) {
+        e.printStackTrace();
+        error(null, "Unable to write CentralNavigator class");
+      }
+      try {
+        LouterGenerator.brewJava().writeTo(mFiler);
+      } catch (IOException e) {
+        e.printStackTrace();
+        error(null, "Unable to write Louter class");
+      }
+    }
+    return true;
   }
 
   private Map<Element, SubNavigatorGenerator> findAndParseTargets(final RoundEnvironment env) {
@@ -104,26 +128,29 @@ public final class LouterProcessor extends AbstractProcessor {
 
   private SubNavigatorGenerator parseNavigator(final Element element) {
     final TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
-    if (element.getKind() != ElementKind.INTERFACE) {
-      error(element, "@%s class type must be 'interface'. (%s.%s)",
+    if (enclosingElement.getKind() != ElementKind.INTERFACE) {
+      error(element, "@%s holder class type must be 'interface'. (%s.%s)",
           Navigator.class.getSimpleName(), enclosingElement.getQualifiedName(),
           element.getSimpleName());
       return null;
     }
-    final List<NavigationParam> params = element.getEnclosedElements().stream()
-        .filter(e -> e.getKind() == ElementKind.METHOD)
-        .map(e -> (ExecutableElement) e)
+    if (element.getKind() != ElementKind.METHOD) {
+      error(element, "@%s must annotates a method. (%s.%s)",
+          Navigator.class.getSimpleName(), enclosingElement.getQualifiedName(),
+          element.getSimpleName());
+      return null;
+    }
+    final List<NavigationParam> params = ((ExecutableElement) element).getParameters().stream()
         .map(this::convertToNavigationParam)
         .collect(Collectors.toList());
     final Navigator annotation = element.getAnnotation(Navigator.class);
     return new SubNavigatorGenerator(annotation, params, getPackageName(enclosingElement));
   }
 
-  private NavigationParam convertToNavigationParam(final ExecutableElement paramDefinition) {
-    final VariableElement param = paramDefinition.getParameters().get(0);
+  private NavigationParam convertToNavigationParam(final VariableElement paramDefinition) {
     final String key = paramDefinition.getSimpleName().toString();
-    final TypeName paramType = TypeName.get(param.asType());
-    final boolean required = NavigationParam.isRequiredParam(param);
+    final TypeName paramType = TypeName.get(paramDefinition.asType());
+    final boolean required = NavigationParam.isRequiredParam(paramDefinition);
     return new NavigationParam(key, paramType, required);
   }
 

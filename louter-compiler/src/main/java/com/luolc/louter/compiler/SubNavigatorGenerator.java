@@ -40,6 +40,7 @@ import javax.lang.model.element.Modifier;
 
 import static com.squareup.javapoet.MethodSpec.methodBuilder;
 
+
 /**
  * @author LuoLiangchen
  * @since 2017/1/11
@@ -73,7 +74,7 @@ public class SubNavigatorGenerator {
     final ClassName abstractNavigator = ClassName.get(
         ABSTRACT_NAVIGATOR_PACKAGE_NAME, ABSTRACT_NAVIGATOR_CLASS_NAME);
     final TypeName superClass = ParameterizedTypeName.get(abstractNavigator, mThisClass);
-    TypeSpec root = TypeSpec.classBuilder(mSimpleClassName)
+    final TypeSpec root = TypeSpec.classBuilder(mSimpleClassName)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .superclass(superClass)
         .addMethod(createConstructor())
@@ -87,11 +88,19 @@ public class SubNavigatorGenerator {
     return JavaFile.builder(mPackageName, root).build();
   }
 
-  String generateSimpleClassName() {
+  String getPackageName() {
+    return mPackageName;
+  }
+
+  final String generateSimpleClassName() {
+    return "LouterNavigator_" + generateTargetName();
+  }
+
+  String generateTargetName() {
     return Arrays.stream(mPath.split("/|_"))
         .filter(word -> !word.isEmpty())
         .map(SubNavigatorGenerator::capitalizeFully)
-        .reduce("LouterNavigator_", (x, y) -> x + y);
+        .reduce("", (x, y) -> x + y);
   }
 
   static String capitalizeFully(final String word) {
@@ -150,7 +159,7 @@ public class SubNavigatorGenerator {
 
   private MethodSpec createRequiredParamsCheckMethod() {
     final ClassName intent = ClassName.get("android.content", "Intent");
-    final MethodSpec.Builder builder = MethodSpec.methodBuilder("isAllRequiredParamsExist")
+    final MethodSpec.Builder builder = methodBuilder("isAllRequiredParamsExist")
         .addModifiers(Modifier.PROTECTED)
         .returns(TypeName.BOOLEAN)
         .addAnnotation(Override.class)
