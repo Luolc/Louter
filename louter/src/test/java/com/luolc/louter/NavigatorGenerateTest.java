@@ -42,6 +42,69 @@ import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 public class NavigatorGenerateTest {
 
   @Test
+  public void singleNavigatorWithoutParams() {
+    JavaFileObject source = JavaFileObjects.forSourceString("test.Router", ""
+        + "package test;\n"
+        + "import com.luolc.louter.Navigator;\n"
+        + "public interface Router {\n"
+        + "  @Navigator(\"public_info/classroom/detail\")\n"
+        + "  void publicInfoClassroomDetail();\n"
+        + "}"
+    );
+
+    JavaFileObject generatedNavigatorSource = JavaFileObjects.forSourceString("test/LouterNavigator_PublicInfoClassroomDetail", ""
+        + "package test;\n"
+        + "\n"
+        + "import android.content.Intent;\n"
+        + "import android.support.annotation.AnimRes;\n"
+        + "import com.luolc.louter.navigator.AbstractNavigator;\n"
+        + "import java.lang.Object;\n"
+        + "import java.lang.Override;\n"
+        + "import java.lang.String;\n"
+        + "\n"
+        + "public final class LouterNavigator_PublicInfoClassroomDetail extends AbstractNavigator<LouterNavigator_PublicInfoClassroomDetail> {\n"
+        + "  public LouterNavigator_PublicInfoClassroomDetail(String baseUrl, Object starter) {\n"
+        + "    super(baseUrl, \"public_info/classroom/detail\", starter);\n"
+        + "  }\n"
+        + "\n"
+        + "  @Override\n"
+        + "  public void start() {\n"
+        + "    super.start();\n"
+        + "  }\n"
+        + "\n"
+        + "  @Override\n"
+        + "  public LouterNavigator_PublicInfoClassroomDetail addFlags(int flags) {\n"
+        + "    return super.addFlags(flags);\n"
+        + "  }\n"
+        + "\n"
+        + "  @Override\n"
+        + "  public LouterNavigator_PublicInfoClassroomDetail forResult(int requestCode) {\n"
+        + "    return super.forResult(requestCode);\n"
+        + "  }\n"
+        + "\n"
+        + "  @Override\n"
+        + "  public LouterNavigator_PublicInfoClassroomDetail withAnim(@AnimRes int enterAnim, @AnimRes int exitAnim) {\n"
+        + "    return super.withAnim(enterAnim, exitAnim);\n"
+        + "  }\n"
+        + "\n"
+        + "  @Override\n"
+        + "  protected boolean isAllRequiredParamsExist() {\n"
+        + "    final Intent intent = getIntent();\n"
+        + "    boolean result = true;\n"
+        + "    return result;\n"
+        + "  }\n"
+        + "}\n"
+    );
+
+    assertAbout(javaSource()).that(source)
+        .withCompilerOptions("-Xlint:-processing")
+        .processedWith(new LouterProcessor())
+        .compilesWithoutWarnings()
+        .and()
+        .generatesSources(generatedNavigatorSource);
+  }
+
+  @Test
   public void singleNavigatorWithNullableParam() {
     JavaFileObject source = JavaFileObjects.forSourceString("test.Router", ""
         + "package test;\n"

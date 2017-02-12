@@ -50,6 +50,8 @@ public class CentralNavigatorGenerateTest {
         + "public interface Router {\n"
         + "  @Navigator(\"public_info/classroom/detail\")\n"
         + "  void publicInfoClassroomDetail(int holeId, String from, @Nullable boolean hasStarred);\n"
+        + "  @Navigator(\"login\")\n"
+        + "  void login();\n"
         + "}"
     );
 
@@ -58,10 +60,10 @@ public class CentralNavigatorGenerateTest {
         + "\n"
         + "import java.lang.Object;\n"
         + "import java.lang.String;\n"
+        + "import test.LouterNavigator_Login;\n"
         + "import test.LouterNavigator_PublicInfoClassroomDetail;\n"
         + "\n"
         + "public final class CentralNavigator {\n"
-        + "\n"
         + "  private final Object mStarter;\n"
         + "\n"
         + "  private final String mBaseUrl;\n"
@@ -71,9 +73,14 @@ public class CentralNavigatorGenerateTest {
         + "    mBaseUrl = baseUrl;\n"
         + "  }\n"
         + "\n"
+        + "  public LouterNavigator_Login toLogin() {\n"
+        + "    return new LouterNavigator_Login(mBaseUrl, mStarter);\n"
+        + "  }\n"
+        + "\n"
         + "  public LouterNavigator_PublicInfoClassroomDetail toPublicInfoClassroomDetail() {\n"
         + "    return new LouterNavigator_PublicInfoClassroomDetail(mBaseUrl, mStarter);\n"
-        + "  }"
+        + "  }\n"
+        + "}"
     );
 
     assertAbout(javaSource()).that(source)

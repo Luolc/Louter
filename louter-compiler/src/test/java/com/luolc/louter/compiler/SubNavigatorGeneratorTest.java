@@ -59,6 +59,11 @@ public class SubNavigatorGeneratorTest {
   }
 
   @Test
+  public void brewJava() {
+    assertEquals("", mSubNavigatorGenerator.brewJava().toString());
+  }
+
+  @Test
   public void generateSimpleClassName() {
     assertEquals("LouterNavigator_PublicInfoClassroomDetail",
         mSubNavigatorGenerator.generateSimpleClassName());
