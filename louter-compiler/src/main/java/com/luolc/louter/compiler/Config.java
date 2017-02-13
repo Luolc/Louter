@@ -31,31 +31,34 @@ import com.squareup.javapoet.TypeName;
  * @author LuoLiangchen
  * @since 2017/2/10
  */
-public interface Config {
+final class Config {
 
-  String ROOT_PACKAGE = "com.luolc.louter";
+  @SuppressWarnings("WeakerAccess")
+  static final String ROOT_PACKAGE = "com.luolc.louter";
 
-  String LOUTER_PACKAGE_NAME = ROOT_PACKAGE;
+  static final String LOUTER_PACKAGE_NAME = ROOT_PACKAGE;
 
-  String LOUTER_CLASS_NAME = "Louter";
+  static final String LOUTER_CLASS_NAME = "Louter";
 
-  String CENTRAL_NAVIGATOR_PACKAGE_NAME = ROOT_PACKAGE;
+  static final String CENTRAL_NAVIGATOR_PACKAGE_NAME = ROOT_PACKAGE;
 
-  String CENTRAL_NAVIGATOR_CLASS_NAME = "CentralNavigator";
+  static final String CENTRAL_NAVIGATOR_CLASS_NAME = "CentralNavigator";
 
-  ClassName NON_NULL = ClassName.get("android.support.annotation", "NonNull");
+  static final ClassName NON_NULL = ClassName.get("android.support.annotation", "NonNull");
 
-  TypeName CONTEXT = ClassName.get("android.content", "Context");
+  static final TypeName CONTEXT = ClassName.get("android.content", "Context");
 
-  TypeName ACTIVITY = ClassName.get("android.app", "Activity");
+  static final TypeName ACTIVITY = ClassName.get("android.app", "Activity");
 
-  TypeName FRAGMENT = ClassName.get("android.app", "Fragment");
+  static final TypeName FRAGMENT = ClassName.get("android.app", "Fragment");
 
-  TypeName SUPPORT_FRAGMENT = ClassName.get("android.support.v4.app", "Fragment");
+  static final TypeName SUPPORT_FRAGMENT = ClassName.get("android.support.v4.app", "Fragment");
 
-  ClassName LOUTER = ClassName.get(LOUTER_PACKAGE_NAME, LOUTER_CLASS_NAME);
+  static final ClassName LOUTER = ClassName.get(LOUTER_PACKAGE_NAME, LOUTER_CLASS_NAME);
 
-  TypeName LOUTER_BUILDER = LOUTER.nestedClass("Builder");
+  static final TypeName LOUTER_BUILDER = LOUTER.nestedClass("Builder");
 
-  TypeName CENTRAL_NAVIGATOR = ClassName.get(CENTRAL_NAVIGATOR_PACKAGE_NAME, "CentralNavigator");
+  static final TypeName CENTRAL_NAVIGATOR = ClassName.get(CENTRAL_NAVIGATOR_PACKAGE_NAME, "CentralNavigator");
+
+  private Config() {}
 }

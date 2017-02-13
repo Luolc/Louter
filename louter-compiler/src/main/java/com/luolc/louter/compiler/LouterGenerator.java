@@ -49,7 +49,9 @@ import static com.luolc.louter.compiler.Config.SUPPORT_FRAGMENT;
  * @author LuoLiangchen
  * @since 2017/2/10
  */
-class LouterGenerator {
+final class LouterGenerator {
+
+  private LouterGenerator() {}
 
   static JavaFile brewJava() {
     final TypeSpec root = TypeSpec.classBuilder(LOUTER_CLASS_NAME)

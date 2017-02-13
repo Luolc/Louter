@@ -45,7 +45,7 @@ import static com.squareup.javapoet.MethodSpec.methodBuilder;
  * @author LuoLiangchen
  * @since 2017/1/11
  */
-public class SubNavigatorGenerator {
+final class SubNavigatorGenerator implements Comparable<SubNavigatorGenerator> {
 
   private static final String ABSTRACT_NAVIGATOR_PACKAGE_NAME = "com.luolc.louter.navigator";
 
@@ -61,8 +61,8 @@ public class SubNavigatorGenerator {
 
   private final ClassName mThisClass;
 
-  public SubNavigatorGenerator(final Navigator annotation, final List<NavigationParam> params,
-                               final String packageName) {
+  SubNavigatorGenerator(final Navigator annotation, final List<NavigationParam> params,
+                        final String packageName) {
     mPath = annotation.value();
     mParams = params;
     mPackageName = packageName;
@@ -70,7 +70,13 @@ public class SubNavigatorGenerator {
     mThisClass = ClassName.get(mPackageName, generateSimpleClassName());
   }
 
-  public JavaFile brewJava() {
+  @SuppressWarnings("NullableProblems")
+  @Override
+  public int compareTo(final SubNavigatorGenerator generator) {
+    return mSimpleClassName.compareTo(generator.generateSimpleClassName());
+  }
+
+  JavaFile brewJava() {
     final ClassName abstractNavigator = ClassName.get(
         ABSTRACT_NAVIGATOR_PACKAGE_NAME, ABSTRACT_NAVIGATOR_CLASS_NAME);
     final TypeName superClass = ParameterizedTypeName.get(abstractNavigator, mThisClass);
@@ -92,7 +98,7 @@ public class SubNavigatorGenerator {
     return mPackageName;
   }
 
-  final String generateSimpleClassName() {
+  String generateSimpleClassName() {
     return "LouterNavigator_" + generateTargetName();
   }
 

@@ -41,15 +41,15 @@ import static com.luolc.louter.compiler.Config.CENTRAL_NAVIGATOR_PACKAGE_NAME;
  * @author LuoLiangchen
  * @since 2017/2/10
  */
-public class CentralNavigatorGenerator {
+final class CentralNavigatorGenerator {
 
   private final List<SubNavigatorGenerator> mSubNavigatorGenerators;
 
-  public CentralNavigatorGenerator(final List<SubNavigatorGenerator> subNavigatorGenerators) {
+  CentralNavigatorGenerator(final List<SubNavigatorGenerator> subNavigatorGenerators) {
     mSubNavigatorGenerators = subNavigatorGenerators;
   }
 
-  public JavaFile brewJava() {
+  JavaFile brewJava() {
     final TypeSpec root = TypeSpec.classBuilder(CENTRAL_NAVIGATOR_CLASS_NAME)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .addField(ClassName.OBJECT, "mStarter", Modifier.PRIVATE, Modifier.FINAL)

@@ -32,6 +32,7 @@ import com.squareup.javapoet.TypeName;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,8 +51,9 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
+
+import static com.luolc.louter.compiler.LouterGenerator.brewJava;
 
 /**
  * @author LuoLiangchen
@@ -63,7 +65,7 @@ public final class LouterProcessor extends AbstractProcessor {
 
   private Elements mElementUtils;
 
-  private Types mTypeUtils;
+  //private Types mTypeUtils;
 
   private Filer mFiler;
 
@@ -71,7 +73,7 @@ public final class LouterProcessor extends AbstractProcessor {
   public synchronized void init(final ProcessingEnvironment env) {
     super.init(env);
     mElementUtils = env.getElementUtils();
-    mTypeUtils = env.getTypeUtils();
+    //mTypeUtils = env.getTypeUtils();
     mFiler = env.getFiler();
   }
 
@@ -106,15 +108,15 @@ public final class LouterProcessor extends AbstractProcessor {
     });
     if (!generators.isEmpty()) {
       try {
-        new CentralNavigatorGenerator(new ArrayList<>(generators.values())).brewJava().writeTo(mFiler);
+        final List<SubNavigatorGenerator> orderedGenerators = new ArrayList<>(generators.values());
+        Collections.sort(orderedGenerators);
+        new CentralNavigatorGenerator(orderedGenerators).brewJava().writeTo(mFiler);
       } catch (IOException e) {
-        e.printStackTrace();
         error(null, "Unable to write CentralNavigator class");
       }
       try {
-        LouterGenerator.brewJava().writeTo(mFiler);
+        brewJava().writeTo(mFiler);
       } catch (IOException e) {
-        e.printStackTrace();
         error(null, "Unable to write Louter class");
       }
     }
