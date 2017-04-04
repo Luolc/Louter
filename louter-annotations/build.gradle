@@ -1,9 +1,17 @@
 apply plugin: 'java'
 apply from: '../AndroidCodeQualityConfig/quality.gradle'
-
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-}
+apply plugin: 'com.novoda.bintray-release'
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
+
+publish {
+  artifactId = "louter-annotations"
+  repoName = rootProject.ext.bintray.repoName
+  userOrg = rootProject.ext.bintray.userOrg
+  groupId = rootProject.ext.bintray.groupId
+  publishVersion = rootProject.ext.bintray.publishVersion
+  desc = rootProject.ext.bintray.desc
+  website = rootProject.ext.bintray.website
+  licences = rootProject.ext.bintray.licences
+}

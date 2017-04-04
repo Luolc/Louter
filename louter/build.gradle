@@ -2,54 +2,66 @@ import org.gradle.internal.jvm.Jvm
 
 apply plugin: 'com.android.library'
 apply from: '../AndroidCodeQualityConfig/quality.gradle'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+  compileSdkVersion rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
 
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+  defaultConfig {
+    minSdkVersion rootProject.ext.minSdkVersion
+    targetSdkVersion rootProject.ext.targetSdkVersion
+    versionCode 1
+    versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+  }
 }
 
 dependencies {
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile deps.supportAnnotations
-    compile deps.supportCompat
+  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+  compile deps.supportAnnotations
+  compile deps.supportCompat
 
-    testCompile deps.junit
-    testCompile deps.mockito
-    testCompile deps.truth
-    testCompile deps.compiletesting
-    testCompile files(getRuntimeJar())
-    testCompile files(Jvm.current().getToolsJar())
-    testCompile project(':louter-compiler')
+  testCompile deps.test.junit
+  testCompile deps.test.mockito
+  testCompile deps.test.truth
+  testCompile deps.test.compiletesting
+  testCompile files(getRuntimeJar())
+  testCompile files(Jvm.current().getToolsJar())
+  testCompile project(':louter-compiler')
 }
 
 def getRuntimeJar() {
-    try {
-        final File javaBase = new File(System.getProperty("java.home")).getCanonicalFile();
-        File runtimeJar = new File(javaBase, "lib/rt.jar");
-        if (runtimeJar.exists()) {
-            return runtimeJar;
-        }
-        runtimeJar = new File(javaBase, "jre/lib/rt.jar");
-        return runtimeJar.exists() ? runtimeJar : null;
-    } catch (IOException e) {
-        throw new RuntimeException(e);
+  try {
+    final File javaBase = new File(System.getProperty("java.home")).getCanonicalFile();
+    File runtimeJar = new File(javaBase, "lib/rt.jar");
+    if (runtimeJar.exists()) {
+      return runtimeJar;
     }
+    runtimeJar = new File(javaBase, "jre/lib/rt.jar");
+    return runtimeJar.exists() ? runtimeJar : null;
+  } catch (IOException e) {
+    throw new RuntimeException(e);
+  }
+}
+
+publish {
+  artifactId = "louter"
+  repoName = rootProject.ext.bintray.repoName
+  userOrg = rootProject.ext.bintray.userOrg
+  groupId = rootProject.ext.bintray.groupId
+  publishVersion = rootProject.ext.bintray.publishVersion
+  desc = rootProject.ext.bintray.desc
+  website = rootProject.ext.bintray.website
+  licences = rootProject.ext.bintray.licences
 }

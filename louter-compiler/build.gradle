@@ -1,14 +1,26 @@
 apply plugin: 'java'
 apply from: '../AndroidCodeQualityConfig/quality.gradle'
+apply plugin: 'com.novoda.bintray-release'
 
 dependencies {
-    compile project(':louter-annotations')
-    compile deps.javapoet
-    compile deps.autoservice
+  compile project(':louter-annotations')
+  compile deps.javapoet
+  compile deps.autoservice
 
-    testCompile deps.junit
-    testCompile deps.mockito
+  testCompile deps.test.junit
+  testCompile deps.test.mockito
 }
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
+
+publish {
+  artifactId = "louter-compiler"
+  repoName = rootProject.ext.bintray.repoName
+  userOrg = rootProject.ext.bintray.userOrg
+  groupId = rootProject.ext.bintray.groupId
+  publishVersion = rootProject.ext.bintray.publishVersion
+  desc = rootProject.ext.bintray.desc
+  website = rootProject.ext.bintray.website
+  licences = rootProject.ext.bintray.licences
+}
