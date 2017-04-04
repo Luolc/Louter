@@ -32,7 +32,6 @@ import com.squareup.javapoet.TypeName;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,9 +107,8 @@ public final class LouterProcessor extends AbstractProcessor {
     });
     if (!generators.isEmpty()) {
       try {
-        final List<SubNavigatorGenerator> orderedGenerators = new ArrayList<>(generators.values());
-        Collections.sort(orderedGenerators);
-        new CentralNavigatorGenerator(orderedGenerators).brewJava().writeTo(mFiler);
+        new CentralNavigatorGenerator(new ArrayList<>(generators.values()))
+            .brewJava().writeTo(mFiler);
       } catch (IOException e) {
         error(null, "Unable to write CentralNavigator class");
       }

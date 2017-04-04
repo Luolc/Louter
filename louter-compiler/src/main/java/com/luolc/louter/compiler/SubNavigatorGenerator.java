@@ -40,7 +40,6 @@ import javax.lang.model.element.Modifier;
 
 import static com.squareup.javapoet.MethodSpec.methodBuilder;
 
-
 /**
  * @author LuoLiangchen
  * @since 2017/1/11
