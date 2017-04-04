@@ -1,0 +1,29 @@
+git:
+  submodules: false
+language: android
+jdk: oraclejdk8
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-25.0.2
+    - android-25
+    - extra-google-m2repository
+    - extra-android-m2repository
+  licenses:
+    - android-sdk-license-.+
+    - android-sdk-preview-license-.+
+    - google-gdk-license-.+
+before_install:
+  - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+  - git submodule update --init --recursive
+script:
+  - ./gradlew check
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
