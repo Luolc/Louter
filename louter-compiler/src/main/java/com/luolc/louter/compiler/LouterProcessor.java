@@ -40,6 +40,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -68,12 +69,15 @@ public final class LouterProcessor extends AbstractProcessor {
 
   private Filer mFiler;
 
+  private Messager mMessager;
+
   @Override
   public synchronized void init(final ProcessingEnvironment env) {
     super.init(env);
     mElementUtils = env.getElementUtils();
     //mTypeUtils = env.getTypeUtils();
     mFiler = env.getFiler();
+    mMessager = processingEnv.getMessager();
   }
 
   @Override
@@ -165,6 +169,6 @@ public final class LouterProcessor extends AbstractProcessor {
   private void printMessage(final Diagnostic.Kind kind, final Element element,
                             final String message, final Object... args) {
     final String rawMessage = args.length > 0 ? String.format(message, args) : message;
-    processingEnv.getMessager().printMessage(kind, rawMessage, element);
+    mMessager.printMessage(kind, rawMessage, element);
   }
 }
