@@ -43,8 +43,8 @@ public class AliceActivity extends AppCompatActivity {
   @OnClick(R.id.btn_to_bob)
   void onClickToBob() {
     mLouter.with(this)
-        .toHoleDetail()
-        .holeId(7)
+        .toBob()
+        .from("Alice")
         .start();
   }
 

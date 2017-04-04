@@ -27,7 +27,7 @@
                 <data
                         android:scheme="http"
                         android:host="louter.luolc.com"
-                        android:path="/hole/detail"/>
+                        android:path="/bob"/>
             </intent-filter>
         </activity>
     </application>
