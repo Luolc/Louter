@@ -21,14 +21,14 @@
         <activity
                 android:name=".BobActivity"
                 android:label="Bob">
-            <intent-filter android:priority="1">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data
-                        android:scheme="http"
-                        android:host="louter.luolc.com"
-                        android:path="/bob"/>
-            </intent-filter>
+            <!--<intent-filter android:priority="1">-->
+                <!--<action android:name="android.intent.action.VIEW"/>-->
+                <!--<category android:name="android.intent.category.DEFAULT"/>-->
+                <!--<data-->
+                        <!--android:scheme="http"-->
+                        <!--android:host="louter.luolc.com"-->
+                        <!--android:path="/bob"/>-->
+            <!--</intent-filter>-->
         </activity>
     </application>
 

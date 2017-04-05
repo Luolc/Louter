@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * @since 2017/1/6
  */
 @Target(ElementType.TYPE)
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Route {
 
   String value();

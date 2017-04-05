@@ -56,5 +56,6 @@ public class AliceActivity extends AppCompatActivity {
     mLouter = new Louter.Builder()
         .baseUrl("http://louter.luolc.com/")
         .build();
+    mLouter.init(getApplicationContext());
   }
 }

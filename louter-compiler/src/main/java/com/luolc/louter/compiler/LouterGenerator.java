@@ -43,6 +43,7 @@ import static com.luolc.louter.compiler.Config.LOUTER_BUILDER;
 import static com.luolc.louter.compiler.Config.LOUTER_CLASS_NAME;
 import static com.luolc.louter.compiler.Config.LOUTER_PACKAGE_NAME;
 import static com.luolc.louter.compiler.Config.NON_NULL;
+import static com.luolc.louter.compiler.Config.ROOT_PACKAGE;
 import static com.luolc.louter.compiler.Config.SUPPORT_FRAGMENT;
 
 /**
@@ -58,6 +59,7 @@ final class LouterGenerator {
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .addField(ClassName.get(String.class), "mBaseUrl", Modifier.PRIVATE, Modifier.FINAL)
         .addMethod(createConstructor())
+        .addMethod(createInitMethod())
         .addMethod(createWithMethod(CONTEXT, "context"))
         .addMethod(createWithMethod(ACTIVITY, "activity"))
         .addMethod(createWithMethod(SUPPORT_FRAGMENT, "fragment"))
@@ -71,6 +73,16 @@ final class LouterGenerator {
     return MethodSpec.constructorBuilder()
         .addParameter(ClassName.get(String.class), "baseUrl")
         .addStatement("mBaseUrl = baseUrl")
+        .build();
+  }
+
+  private static MethodSpec createInitMethod() {
+    final ClassName routeDetector = ClassName.get(ROOT_PACKAGE, "RouteDetector");
+    return MethodSpec.methodBuilder("init")
+        .addModifiers(Modifier.PUBLIC)
+        .returns(TypeName.VOID)
+        .addParameter(ParameterSpec.builder(CONTEXT, "context").addAnnotation(NON_NULL).build())
+        .addStatement("$T.detect(context, mBaseUrl)", routeDetector)
         .build();
   }
 

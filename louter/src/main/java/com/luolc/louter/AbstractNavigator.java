@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter.navigator;
+package com.luolc.louter;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -32,9 +32,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.annotation.AnimRes;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
-
-import com.luolc.louter.TargetActivityInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,7 +78,14 @@ public abstract class AbstractNavigator<N extends AbstractNavigator> {
     mStarter = starter;
   }
 
-  private static Map<String, TargetActivityInfo> getCachedTargets() {
+  static void putUrlActivityToCache(final String url, final Class<?> clazz) {
+    final TargetActivityInfo target
+        = new TargetActivityInfo(clazz.getPackage().getName(), clazz.getName());
+    getCachedTargets().put(url, target);
+  }
+
+  @VisibleForTesting
+  static Map<String, TargetActivityInfo> getCachedTargets() {
     Map<String, TargetActivityInfo> targets = sCachedTargets;
     if (targets == null) {
       synchronized (TARGETS_LOCK) {

@@ -46,7 +46,7 @@ import static com.squareup.javapoet.MethodSpec.methodBuilder;
  */
 final class SubNavigatorGenerator implements Comparable<SubNavigatorGenerator> {
 
-  private static final String ABSTRACT_NAVIGATOR_PACKAGE_NAME = "com.luolc.louter.navigator";
+  private static final String ABSTRACT_NAVIGATOR_PACKAGE_NAME = "com.luolc.louter";
 
   private static final String ABSTRACT_NAVIGATOR_CLASS_NAME = "AbstractNavigator";
 

@@ -28,10 +28,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.luolc.louter.Route;
+
 /**
  * @author LuoLiangchen
  * @since 2017/1/9
  */
+@Route("bob")
 public class BobActivity extends AppCompatActivity {
 
   @Override
