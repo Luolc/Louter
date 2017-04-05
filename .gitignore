@@ -12,3 +12,5 @@
 .externalNativeBuild
 
 /others/
+
+bintray_deploy.sh
