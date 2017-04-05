@@ -1,0 +1,3 @@
+#!/bin/sh
+bintrayKey=""
+gradle clean build bintrayUpload -PbintrayUser=luolc -PbintrayKey=${bintrayKey} -PdryRun=false
