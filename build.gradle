@@ -32,7 +32,7 @@ ext {
 
 def supportLibraryVersion = '25.2.0'
 def butterknifeVersion = '8.5.1'
-def louterVersion = '0.1.0'
+def louterVersion = '0.1.1'
 
 ext.deps = [
     android           : 'com.google.android:android:4.1.1.4',
@@ -60,7 +60,7 @@ ext.bintray = [
     userOrg       : "luolc",
     groupId       : "com.luolc.louter",
     publishVersion: "$louterVersion",
-    desc          : "Louter is a light weight Android route framework.",
+    desc          : "Louter is a cross-module lightweight Android route framework.",
     website       : "https://github.com/Luolc/Louter",
     licences      : ['MIT'],
 ]
