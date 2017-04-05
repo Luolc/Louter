@@ -4,7 +4,7 @@
 
 Louter is a light weight Android route framework. Using annotation processing to generate boilerplate code for you.
 
-## LICENSE
+## License
 
     The MIT License (MIT)
 
