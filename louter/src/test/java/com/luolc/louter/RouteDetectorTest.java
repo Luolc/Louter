@@ -33,6 +33,8 @@ import android.content.pm.PackageManager;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -51,10 +53,20 @@ public class RouteDetectorTest {
   private PackageManager mPackageManager = mock(PackageManager.class);
 
   private Context mContext = mock(Context.class);
+
   @Before
   public void setUp() {
     when(mContext.getPackageManager()).thenReturn(mPackageManager);
     when(mContext.getPackageName()).thenReturn("com.example");
+  }
+
+  // just for code coverage
+  @Test
+  public void testTouchCtor() throws Exception {
+    Constructor<RouteDetector> ctor = RouteDetector.class.getDeclaredConstructor();
+    assertTrue(Modifier.isPrivate(ctor.getModifiers()));
+    ctor.setAccessible(true);
+    ctor.newInstance();
   }
 
   @Test
