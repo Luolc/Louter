@@ -141,7 +141,7 @@ public abstract class AbstractNavigator<N extends AbstractNavigator> {
   }
 
   private Context getContext() {
-    Context context;
+    final Context context;
     if (mStarter instanceof Activity) {
       context = (Activity) mStarter;
     } else if (mStarter instanceof Fragment) {
@@ -155,7 +155,7 @@ public abstract class AbstractNavigator<N extends AbstractNavigator> {
   }
 
   private Activity getStarterActivity() {
-    Activity starterActivity;
+    final Activity starterActivity;
     if (mStarter instanceof Activity) {
       starterActivity = (Activity) mStarter;
     } else if (mStarter instanceof Fragment) {

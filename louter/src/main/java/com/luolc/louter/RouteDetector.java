@@ -37,7 +37,7 @@ final class RouteDetector {
 
   private RouteDetector() {}
 
-  static void detect(final Context context, final String baseUrl) {
+  static void detect(final Context context, final String baseUrl) throws IllegalStateException {
     final PackageManager pm = context.getPackageManager();
     try {
       final ActivityInfo[] activities
