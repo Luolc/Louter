@@ -18,8 +18,7 @@ before_install:
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
 script:
-  - ./gradlew check
-  - ./gradlew jacocoReport
+  - bash .ci/travis/travis.sh
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 cache:
