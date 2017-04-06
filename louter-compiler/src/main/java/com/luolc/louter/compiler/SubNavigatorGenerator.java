@@ -24,6 +24,8 @@
 
 package com.luolc.louter.compiler;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import com.luolc.louter.Navigator;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
@@ -35,6 +37,8 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.lang.model.element.Modifier;
 
@@ -45,6 +49,8 @@ import static com.squareup.javapoet.MethodSpec.methodBuilder;
  * @since 2017/1/11
  */
 final class SubNavigatorGenerator implements Comparable<SubNavigatorGenerator> {
+
+  static final String MSG_CHECK_PATH = "path must match regex: ^[a-z][a-z_/]*[a-z]?$, exact: ";
 
   private static final String ABSTRACT_NAVIGATOR_PACKAGE_NAME = "com.luolc.louter";
 
@@ -62,11 +68,22 @@ final class SubNavigatorGenerator implements Comparable<SubNavigatorGenerator> {
 
   SubNavigatorGenerator(final Navigator annotation, final List<NavigationParam> params,
                         final String packageName) {
-    mPath = annotation.value();
+    mPath = checkPath(annotation.value());
     mParams = params;
     mPackageName = packageName;
     mSimpleClassName = generateSimpleClassName();
     mThisClass = ClassName.get(mPackageName, generateSimpleClassName());
+  }
+
+  private static String checkPath(final String path) {
+    final Pattern pattern = Pattern.compile("^[a-z][a-z_/]*[a-z]?$");
+    final Matcher matcher = pattern.matcher(path);
+    if (matcher.matches() && !path.contains("__") && !path.contains("//")
+        && !path.contains("_/") && !path.contains("/_")) {
+      return path;
+    } else {
+      throw new IllegalArgumentException(MSG_CHECK_PATH + path);
+    }
   }
 
   @SuppressWarnings("NullableProblems")
@@ -103,11 +120,11 @@ final class SubNavigatorGenerator implements Comparable<SubNavigatorGenerator> {
 
   String generateTargetName() {
     return Arrays.stream(mPath.split("/|_"))
-        .filter(word -> !word.isEmpty())
         .map(SubNavigatorGenerator::capitalizeFully)
         .reduce("", (x, y) -> x + y);
   }
 
+  @VisibleForTesting
   static String capitalizeFully(final String word) {
     return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
   }

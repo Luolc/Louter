@@ -25,29 +25,63 @@
 package com.luolc.louter.compiler;
 
 import com.luolc.louter.Navigator;
+import com.squareup.javapoet.MethodSpec;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 
-import static junit.framework.TestCase.assertEquals;
+import static com.luolc.louter.compiler.SubNavigatorGenerator.MSG_CHECK_PATH;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author LuoLiangchen
  * @since 2017/1/12
  */
-public class SubNavigatorGeneratorTest {
+public class SubNavigatorGeneratorTest extends BaseTest {
 
   private SubNavigatorGenerator mSubNavigatorGenerator;
 
   @Before
   public void setUp() {
-    Navigator annotation = new Navigator() {
+    Navigator annotation = createNavigatorAnnotation("public_info/classroom/detail");
+    mSubNavigatorGenerator = new SubNavigatorGenerator(annotation, new LinkedList<>(), "com.example");
+  }
+
+  @Test
+  public void testCheckPath() {
+    assertException(
+        () -> new SubNavigatorGenerator(createNavigatorAnnotation("Abc"), new LinkedList<>(), ""),
+        IllegalArgumentException.class,
+        MSG_CHECK_PATH + "Abc");
+    assertException(
+        () -> new SubNavigatorGenerator(createNavigatorAnnotation("a//b"), new LinkedList<>(), ""),
+        IllegalArgumentException.class,
+        MSG_CHECK_PATH + "a//b");
+    assertException(
+        () -> new SubNavigatorGenerator(createNavigatorAnnotation("a/_b"), new LinkedList<>(), ""),
+        IllegalArgumentException.class,
+        MSG_CHECK_PATH + "a/_b");
+    assertException(
+        () -> new SubNavigatorGenerator(createNavigatorAnnotation("a_/b"), new LinkedList<>(), ""),
+        IllegalArgumentException.class,
+        MSG_CHECK_PATH + "a_/b");
+    assertException(
+        () -> new SubNavigatorGenerator(createNavigatorAnnotation("a__b"), new LinkedList<>(), ""),
+        IllegalArgumentException.class,
+        MSG_CHECK_PATH + "a__b");
+  }
+
+  private Navigator createNavigatorAnnotation(String value) {
+    return new Navigator() {
       @Override
       public String value() {
-        return "public_info/classroom/detail";
+        return value;
       }
 
       @Override
@@ -55,32 +89,45 @@ public class SubNavigatorGeneratorTest {
         return Navigator.class;
       }
     };
-    mSubNavigatorGenerator = new SubNavigatorGenerator(annotation, new LinkedList<>(), "test");
   }
 
-//  @Test
-//  public void brewJava() {
-//    assertEquals("", mSubNavigatorGenerator.brewJava().toString());
-//  }
+  @Test
+  public void testCtorMethodSpec() throws Exception {
+    Method ctor = mSubNavigatorGenerator.getClass().getDeclaredMethod("createConstructor");
+    assertTrue(Modifier.isPrivate(ctor.getModifiers()));
+    ctor.setAccessible(true);
+    MethodSpec methodSpec = (MethodSpec) ctor.invoke(mSubNavigatorGenerator);
+    assertTrue(methodSpec.isConstructor());
+    String expected = ""
+        + "public Constructor(java.lang.String baseUrl, java.lang.Object starter) {\n"
+        + "  super(baseUrl, \"public_info/classroom/detail\", starter);\n"
+        + "}\n";
+    assertEquals(expected, methodSpec.toString());
+  }
 
   @Test
-  public void generateSimpleClassName() {
+  public void testPackageName() {
+    assertEquals("com.example", mSubNavigatorGenerator.getPackageName());
+  }
+
+  @Test
+  public void testGenerateSimpleClassName() {
     assertEquals("LouterNavigator_PublicInfoClassroomDetail",
         mSubNavigatorGenerator.generateSimpleClassName());
   }
 
   @Test
-  public void capitalizeFullyWithCommonWord() {
+  public void testCapitalizeFullyWithCommonWord() {
     assertEquals("Hello", SubNavigatorGenerator.capitalizeFully("hElLO"));
   }
 
   @Test
-  public void capitalizeFullyWithSingleLetter() {
+  public void testCapitalizeFullyWithSingleLetter() {
     assertEquals("A", SubNavigatorGenerator.capitalizeFully("a"));
   }
 
   @Test
-  public void capitalizeFullyWithNonLetter() {
+  public void testCapitalizeFullyWithNonLetter() {
     assertEquals("1", SubNavigatorGenerator.capitalizeFully("1"));
   }
 }
