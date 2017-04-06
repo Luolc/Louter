@@ -50,7 +50,9 @@ public class BaseTest {
     try {
       action.call();
       fail("expect exception " + expectedThrowable.getCanonicalName() + " with msg: " + expectedMsg);
-    } catch (Throwable actual) {
+    }
+    // -@cs[IllegalCatch] Allow throwable catch in boilerplate method.
+    catch (Throwable actual) {
       assertTrue(expectedThrowable.isAssignableFrom(actual.getClass()));
       assertEquals(expectedMsg, actual.getMessage());
     }
