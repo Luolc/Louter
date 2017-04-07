@@ -28,6 +28,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -78,9 +79,9 @@ public abstract class AbstractNavigator<N extends AbstractNavigator> {
     mStarter = starter;
   }
 
-  static void putUrlActivityToCache(final String url, final Class<?> clazz) {
+  static void putUrlActivityToCache(final String url, final ActivityInfo activityInfo) {
     final TargetActivityInfo target
-        = new TargetActivityInfo(clazz.getPackage().getName(), clazz.getName());
+        = new TargetActivityInfo(activityInfo.packageName, activityInfo.name);
     getCachedTargets().put(url, target);
   }
 

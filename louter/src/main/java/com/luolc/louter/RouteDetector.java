@@ -51,7 +51,7 @@ final class RouteDetector {
           }
           if (clazz.isAnnotationPresent(Route.class)) {
             final String url = baseUrl + clazz.getAnnotation(Route.class).value();
-            AbstractNavigator.putUrlActivityToCache(url, clazz);
+            AbstractNavigator.putUrlActivityToCache(url, activityInfo);
           }
         } catch (ClassNotFoundException ignore) {
           // ignore

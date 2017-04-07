@@ -72,7 +72,7 @@ public class RouteDetectorTest {
   @Test
   public void testDefault() throws Exception {
     mTargets.clear();
-    PackageInfo packageInfo = createPackageInfo(Foo1.class, Foo3.class);
+    PackageInfo packageInfo = createPackageInfo("com.example", Foo1.class, Foo3.class);
     when(mPackageManager.getPackageInfo("com.example", PackageManager.GET_ACTIVITIES))
         .thenReturn(packageInfo);
     RouteDetector.detect(mContext, "http://test.com/");
@@ -80,14 +80,14 @@ public class RouteDetectorTest {
     assertEquals(1, mTargets.size());
     assertTrue(mTargets.containsKey("http://test.com/foo1"));
     TargetActivityInfo target = mTargets.get("http://test.com/foo1");
-    assertEquals(Foo1.class.getPackage().getName(), target.packageName());
+    assertEquals("com.example", target.packageName());
     assertEquals(Foo1.class.getName(), target.className());
   }
 
   @Test
   public void testClassNotFoundException() throws Exception {
     mTargets.clear();
-    PackageInfo packageInfo = createPackageInfo("not exist", Foo1.class, Foo2.class);
+    PackageInfo packageInfo = createPackageInfo("com.example", Foo1.class, "not exist", Foo2.class);
     when(mPackageManager.getPackageInfo("com.example", PackageManager.GET_ACTIVITIES))
         .thenReturn(packageInfo);
     RouteDetector.detect(mContext, "http://test.com/");
@@ -108,7 +108,7 @@ public class RouteDetectorTest {
   @Test
   public void testAnnotateInvalidClass() throws Exception {
     mTargets.clear();
-    PackageInfo packageInfo = createPackageInfo(Foo1.class, Foo4.class);
+    PackageInfo packageInfo = createPackageInfo("com.example", Foo1.class, Foo4.class);
     when(mPackageManager.getPackageInfo("com.example", PackageManager.GET_ACTIVITIES))
         .thenReturn(packageInfo);
     try {
@@ -120,7 +120,7 @@ public class RouteDetectorTest {
     }
   }
 
-  private PackageInfo createPackageInfo(Object... args) {
+  private PackageInfo createPackageInfo(String packageName, Object... args) {
     final ActivityInfo[] activities = new ActivityInfo[args.length];
     for (int i = 0; i < args.length; i++) {
       final Object arg = args[i];
@@ -130,6 +130,7 @@ public class RouteDetectorTest {
       } else if (arg instanceof String) {
         info.name = (String) arg;
       }
+      info.packageName = packageName;
       activities[i] = info;
     }
     final PackageInfo packageInfo = new PackageInfo();
