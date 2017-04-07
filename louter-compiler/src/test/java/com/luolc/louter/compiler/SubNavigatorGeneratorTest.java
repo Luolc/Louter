@@ -56,9 +56,9 @@ public class SubNavigatorGeneratorTest extends BaseTest {
   @Test
   public void testCheckPath() {
     assertException(
-        () -> new SubNavigatorGenerator(createNavigatorAnnotation("Abc"), new LinkedList<>(), ""),
+        () -> new SubNavigatorGenerator(createNavigatorAnnotation("a$c"), new LinkedList<>(), ""),
         IllegalArgumentException.class,
-        MSG_CHECK_PATH + "Abc");
+        MSG_CHECK_PATH + "a$c");
     assertException(
         () -> new SubNavigatorGenerator(createNavigatorAnnotation("a//b"), new LinkedList<>(), ""),
         IllegalArgumentException.class,
