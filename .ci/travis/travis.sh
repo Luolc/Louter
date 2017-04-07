@@ -2,5 +2,4 @@
 ./gradlew --stacktrace \
 :louter:check :louter:jacocoReport \
 :louter-compiler:check :louter-compiler:jacocoReport \
-:louter-annotations:check :louter-annotations:jacocoReport \
-:app:check
+:louter-annotations:check :louter-annotations:jacocoReport
