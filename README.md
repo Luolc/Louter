@@ -8,8 +8,8 @@ Louter is a cross-module lightweight Android route framework. Using annotation p
 
 ```groovy
 dependencies {
-  compile 'com.luolc.louter:louter:0.2.0'
-  annotationProcessor 'com.luolc.louter:louter-compiler:0.2.0'
+  compile 'com.luolc.louter:louter:0.2.1'
+  annotationProcessor 'com.luolc.louter:louter-compiler:0.2.1'
 }
 ```
 
