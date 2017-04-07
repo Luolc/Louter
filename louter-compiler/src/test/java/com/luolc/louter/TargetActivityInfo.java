@@ -22,47 +22,27 @@
  * SOFTWARE.
  */
 
-package com.luolc.louter.compiler;
+package com.luolc.louter;
 
-import java.util.Arrays;
+import android.support.annotation.NonNull;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+/** A fake {@code com.luolc.louter.TargetActivityInfo}. */
+public final class TargetActivityInfo {
 
-/**
- * @author LuoLiangchen
- * @since 2017/4/6
- */
-public class BaseTest {
+  private final String mPackageName;
 
-  protected BaseTest() {}
+  private final String mClassName;
 
-  protected static void fail(String... messages) {
-    if (messages.length == 0) {
-      throw new AssertionError();
-    } else if (messages.length == 1) {
-      throw new AssertionError(messages[0]);
-    } else {
-      Arrays.stream(messages).reduce((x, y) -> x + ", " + y).ifPresent(msg -> {
-        throw new AssertionError(msg);
-      });
-    }
+  public TargetActivityInfo(@NonNull final String packageName, @NonNull final String className) {
+    mPackageName = packageName;
+    mClassName = className;
   }
 
-  protected static void assertException(
-      Action action, Class<? extends Throwable> expectedThrowable, String expectedMsg) {
-    try {
-      action.call();
-      fail("expect exception " + expectedThrowable.getCanonicalName() + " with msg: " + expectedMsg);
-    }
-    // -@cs[IllegalCatch] Allow throwable catch in boilerplate method.
-    catch (Throwable actual) {
-      assertTrue(expectedThrowable.isAssignableFrom(actual.getClass()));
-      assertEquals(expectedMsg, actual.getMessage());
-    }
+  public String packageName() {
+    return mPackageName;
   }
 
-  protected interface Action {
-    void call();
+  public String className() {
+    return mClassName;
   }
 }

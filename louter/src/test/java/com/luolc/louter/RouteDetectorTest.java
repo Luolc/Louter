@@ -62,7 +62,7 @@ public class RouteDetectorTest {
 
   // just for code coverage
   @Test
-  public void testTouchCtor() throws Exception {
+  public void testCtor() throws Exception {
     Constructor<RouteDetector> ctor = RouteDetector.class.getDeclaredConstructor();
     assertTrue(Modifier.isPrivate(ctor.getModifiers()));
     ctor.setAccessible(true);

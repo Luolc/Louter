@@ -24,20 +24,22 @@
 
 package com.luolc.louter.compiler;
 
+import com.google.testing.compile.JavaFileObjects;
+
 import com.luolc.louter.Navigator;
-import com.squareup.javapoet.MethodSpec;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 
+import javax.tools.JavaFileObject;
+
+import static com.google.common.truth.Truth.assertAbout;
+import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 import static com.luolc.louter.compiler.SubNavigatorGenerator.MSG_CHECK_PATH;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author LuoLiangchen
@@ -51,6 +53,22 @@ public class SubNavigatorGeneratorTest extends BaseTest {
   public void setUp() {
     Navigator annotation = createNavigatorAnnotation("public_info/classroom/detail");
     mSubNavigatorGenerator = new SubNavigatorGenerator(annotation, new LinkedList<>(), "com.example");
+  }
+
+  @Test
+  public void testIntegration() {
+    JavaFileObject source = JavaFileObjects.forResource("com/luolc/louter/compiler/InputRouter.java");
+    JavaFileObject expectedPublicInfoClassroomDetail = JavaFileObjects.forResource(
+        "com/luolc/louter/compiler/ExpectedLouterNavigator_PublicInfoClassroomDetail.java");
+    JavaFileObject expectedHoleList = JavaFileObjects.forResource(
+        "com/luolc/louter/compiler/ExpectedLouterNavigator_HoleList.java");
+
+    assertAbout(javaSource()).that(source)
+        .withCompilerOptions("-Xlint:-processing")
+        .processedWith(new LouterProcessor())
+        .compilesWithoutWarnings()
+        .and()
+        .generatesSources(expectedPublicInfoClassroomDetail, expectedHoleList);
   }
 
   @Test
@@ -89,20 +107,6 @@ public class SubNavigatorGeneratorTest extends BaseTest {
         return Navigator.class;
       }
     };
-  }
-
-  @Test
-  public void testCtorMethodSpec() throws Exception {
-    Method ctor = mSubNavigatorGenerator.getClass().getDeclaredMethod("createConstructor");
-    assertTrue(Modifier.isPrivate(ctor.getModifiers()));
-    ctor.setAccessible(true);
-    MethodSpec methodSpec = (MethodSpec) ctor.invoke(mSubNavigatorGenerator);
-    assertTrue(methodSpec.isConstructor());
-    String expected = ""
-        + "public Constructor(java.lang.String baseUrl, java.lang.Object starter) {\n"
-        + "  super(baseUrl, \"public_info/classroom/detail\", starter);\n"
-        + "}\n";
-    assertEquals(expected, methodSpec.toString());
   }
 
   @Test

@@ -24,40 +24,25 @@
 
 package com.luolc.louter.compiler;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
+import org.junit.Test;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author LuoLiangchen
- * @since 2017/2/10
+ * @since 2017/4/7
  */
-final class Config {
+public class ConfigTest extends BaseTest {
 
-  static final String ROOT_PACKAGE = "com.luolc.louter";
-
-  static final String LOUTER_PACKAGE_NAME = ROOT_PACKAGE;
-
-  static final String LOUTER_CLASS_NAME = "Louter";
-
-  static final String CENTRAL_NAVIGATOR_PACKAGE_NAME = ROOT_PACKAGE;
-
-  static final String CENTRAL_NAVIGATOR_CLASS_NAME = "CentralNavigator";
-
-  static final ClassName NON_NULL = ClassName.get("android.support.annotation", "NonNull");
-
-  static final TypeName CONTEXT = ClassName.get("android.content", "Context");
-
-  static final TypeName ACTIVITY = ClassName.get("android.app", "Activity");
-
-  static final TypeName FRAGMENT = ClassName.get("android.app", "Fragment");
-
-  static final TypeName SUPPORT_FRAGMENT = ClassName.get("android.support.v4.app", "Fragment");
-
-  static final ClassName LOUTER = ClassName.get(LOUTER_PACKAGE_NAME, LOUTER_CLASS_NAME);
-
-  static final TypeName LOUTER_BUILDER = LOUTER.nestedClass("Builder");
-
-  static final TypeName CENTRAL_NAVIGATOR = ClassName.get(CENTRAL_NAVIGATOR_PACKAGE_NAME, "CentralNavigator");
-
-  private Config() {}
+  // just for code coverage
+  @Test
+  public void testCtor() throws Exception {
+    Constructor<Config> ctor = Config.class.getDeclaredConstructor();
+    assertTrue(Modifier.isPrivate(ctor.getModifiers()));
+    ctor.setAccessible(true);
+    ctor.newInstance();
+  }
 }

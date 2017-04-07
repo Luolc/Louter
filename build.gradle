@@ -41,6 +41,7 @@ ext.deps = [
 
     butterknife       : "com.jakewharton:butterknife:$butterknifeVersion",
     javapoet          : "com.squareup:javapoet:1.7.0",
+    okio              : "com.squareup.okio:okio:1.11.0",
     autoservice       : 'com.google.auto.service:auto-service:1.0-rc2',
 ]
 

@@ -24,45 +24,31 @@
 
 package com.luolc.louter.compiler;
 
-import java.util.Arrays;
+import com.google.testing.compile.JavaFileObjects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import javax.tools.JavaFileObject;
+
+import static com.google.common.truth.Truth.assertAbout;
+import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
 
 /**
  * @author LuoLiangchen
- * @since 2017/4/6
+ * @since 2017/4/8
  */
-public class BaseTest {
+public class CentralNavigatorGeneratorTest extends BaseTest {
 
-  protected BaseTest() {}
+  @Test
+  public void testIntegration() {
+    JavaFileObject source = JavaFileObjects.forResource("com/luolc/louter/compiler/InputRouter.java");
+    JavaFileObject expected = JavaFileObjects.forResource("com/luolc/louter/ExpectedCentralNavigator.java");
 
-  protected static void fail(String... messages) {
-    if (messages.length == 0) {
-      throw new AssertionError();
-    } else if (messages.length == 1) {
-      throw new AssertionError(messages[0]);
-    } else {
-      Arrays.stream(messages).reduce((x, y) -> x + ", " + y).ifPresent(msg -> {
-        throw new AssertionError(msg);
-      });
-    }
-  }
-
-  protected static void assertException(
-      Action action, Class<? extends Throwable> expectedThrowable, String expectedMsg) {
-    try {
-      action.call();
-      fail("expect exception " + expectedThrowable.getCanonicalName() + " with msg: " + expectedMsg);
-    }
-    // -@cs[IllegalCatch] Allow throwable catch in boilerplate method.
-    catch (Throwable actual) {
-      assertTrue(expectedThrowable.isAssignableFrom(actual.getClass()));
-      assertEquals(expectedMsg, actual.getMessage());
-    }
-  }
-
-  protected interface Action {
-    void call();
+    assertAbout(javaSource()).that(source)
+        .withCompilerOptions("-Xlint:-processing")
+        .processedWith(new LouterProcessor())
+        .compilesWithoutWarnings()
+        .and()
+        .generatesSources(expected);
   }
 }
