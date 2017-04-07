@@ -32,7 +32,7 @@ ext {
 
 def supportLibraryVersion = '25.3.1'
 def butterknifeVersion = '8.5.1'
-def louterVersion = '0.1.1'
+def louterVersion = '0.2.0'
 
 ext.deps = [
     android           : 'com.google.android:android:4.1.1.4',
